@@ -116,7 +116,7 @@ class AiAgent(models.Model):
                 'record': record,
             }
             try:
-                safe_eval(code_to_execute, eval_context, mode='exec', nocopy=True)
+                safe_eval(code_to_execute, eval_context, mode='exec')
                 execution_log += "\n\n--- Execution: SUCCESS ---"
             except Exception as e:
                 execution_log += f"\n\n--- Execution: FAILED ---\n{str(e)}"
