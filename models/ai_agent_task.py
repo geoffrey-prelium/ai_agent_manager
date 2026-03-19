@@ -3,11 +3,11 @@ from odoo import models, fields, api
 
 
 class AiAgentTask(models.Model):
-    _name = 'ai.agent.task'
+    _name = 'ai_manager.task'
     _description = 'AI Agent Task / Trigger'
 
     name = fields.Char(string='Task Name', required=True)
-    agent_id = fields.Many2one('ai.agent', string='AI Agent', required=True, ondelete='cascade')
+    agent_id = fields.Many2one('ai_manager.agent', string='AI Agent', required=True, ondelete='cascade')
     active = fields.Boolean(default=True)
 
     trigger_type = fields.Selection([
@@ -28,7 +28,7 @@ class AiAgentTask(models.Model):
         """
         self.ensure_one()
         # Mocking an execution log creation
-        self.env['ai.agent.log'].create({
+        self.env['ai_manager.log'].create({
             'agent_id': self.agent_id.id,
             'task_id': self.id,
             'input_data': f"Triggered manually with code: {self.action_code}",

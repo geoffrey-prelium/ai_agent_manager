@@ -3,8 +3,8 @@
 
     <!-- Form View -->
     <record id="view_ai_agent_task_form" model="ir.ui.view">
-        <field name="name">ai.agent.task.form</field>
-        <field name="model">ai.agent.task</field>
+        <field name="name">ai_manager.task.form</field>
+        <field name="model">ai_manager.task</field>
         <field name="arch" type="xml">
             <form string="AI Agent Task">
                 <sheet>
@@ -34,8 +34,8 @@
 
     <!-- Tree View -->
     <record id="view_ai_agent_task_tree" model="ir.ui.view">
-        <field name="name">ai.agent.task.tree</field>
-        <field name="model">ai.agent.task</field>
+        <field name="name">ai_manager.task.tree</field>
+        <field name="model">ai_manager.task</field>
         <field name="arch" type="xml">
             <tree string="AI Agent Tasks">
                 <field name="name"/>
@@ -49,7 +49,7 @@
     <!-- Action -->
     <record id="action_ai_agent_task" model="ir.actions.act_window">
         <field name="name">Agent Tasks / Triggers</field>
-        <field name="res_model">ai.agent.task</field>
+        <field name="res_model">ai_manager.task</field>
         <field name="view_mode">tree,form</field>
     </record>
 

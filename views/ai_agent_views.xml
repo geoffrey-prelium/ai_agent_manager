@@ -3,8 +3,8 @@
 
     <!-- Kanban View -->
     <record id="view_ai_agent_kanban" model="ir.ui.view">
-        <field name="name">ai.agent.kanban</field>
-        <field name="model">ai.agent</field>
+        <field name="name">ai_manager.agent.kanban</field>
+        <field name="model">ai_manager.agent</field>
         <field name="arch" type="xml">
             <kanban class="o_kanban_mobile">
                 <field name="id"/>
@@ -45,14 +45,14 @@
 
     <!-- Form View -->
     <record id="view_ai_agent_form" model="ir.ui.view">
-        <field name="name">ai.agent.form</field>
-        <field name="model">ai.agent</field>
+        <field name="name">ai_manager.agent.form</field>
+        <field name="model">ai_manager.agent</field>
         <field name="arch" type="xml">
             <form string="AI Agent">
                 <header>
-                    <button name="action_activate" string="Activate" type="object" class="oe_highlight" invisible="state != 'draft'" groups="ai_agent_manager.group_ai_agent_manager"/>
-                    <button name="action_draft" string="Set to Draft" type="object" invisible="state == 'draft'" groups="ai_agent_manager.group_ai_agent_manager"/>
-                    <button name="action_archive" string="Archive" type="object" invisible="state == 'archived'" groups="ai_agent_manager.group_ai_agent_manager"/>
+                    <button name="action_activate" string="Activate" type="object" class="oe_highlight" invisible="state != 'draft'" groups="ai_agent_manager.group_ai_manager_agent_manager"/>
+                    <button name="action_draft" string="Set to Draft" type="object" invisible="state == 'draft'" groups="ai_agent_manager.group_ai_manager_agent_manager"/>
+                    <button name="action_archive" string="Archive" type="object" invisible="state == 'archived'" groups="ai_agent_manager.group_ai_manager_agent_manager"/>
                     <button name="action_open_sandbox" string="Test (Sandbox)" type="object" icon="fa-commenting-o"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,active,archived"/>
                 </header>
@@ -104,8 +104,8 @@
 
     <!-- Tree View -->
     <record id="view_ai_agent_tree" model="ir.ui.view">
-        <field name="name">ai.agent.tree</field>
-        <field name="model">ai.agent</field>
+        <field name="name">ai_manager.agent.tree</field>
+        <field name="model">ai_manager.agent</field>
         <field name="arch" type="xml">
             <tree string="AI Agents" decoration-info="state=='draft'" decoration-muted="state=='archived'">
                 <field name="name"/>
@@ -120,7 +120,7 @@
     <!-- Action -->
     <record id="action_ai_agent" model="ir.actions.act_window">
         <field name="name">AI Agents</field>
-        <field name="res_model">ai.agent</field>
+        <field name="res_model">ai_manager.agent</field>
         <field name="view_mode">kanban,tree,form</field>
         <field name="help" type="html">
           <p class="o_view_nocontent_smiling_face">

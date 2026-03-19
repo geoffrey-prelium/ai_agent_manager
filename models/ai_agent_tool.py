@@ -3,7 +3,7 @@ from odoo import models, fields
 
 
 class AiAgentTool(models.Model):
-    _name = 'ai.agent.tool'
+    _name = 'ai_manager.tool'
     _description = 'AI Agent capability / tool'
 
     name = fields.Char(string='Tool Name', required=True)

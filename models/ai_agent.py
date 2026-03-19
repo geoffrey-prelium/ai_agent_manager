@@ -3,7 +3,7 @@ from odoo import models, fields, api, _
 
 
 class AiAgent(models.Model):
-    _name = 'ai.agent'
+    _name = 'ai_manager.agent'
     _description = 'AI Agent'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
@@ -30,9 +30,9 @@ class AiAgent(models.Model):
 
     color = fields.Integer("Color Index")
 
-    tool_ids = fields.Many2many('ai.agent.tool', string='Tools / Capabilities')
-    task_ids = fields.One2many('ai.agent.task', 'agent_id', string='Tasks / Triggers')
-    log_ids = fields.One2many('ai.agent.log', 'agent_id', string='Execution Logs')
+    tool_ids = fields.Many2many('ai_manager.tool', string='Tools / Capabilities')
+    task_ids = fields.One2many('ai_manager.task', 'agent_id', string='Tasks / Triggers')
+    log_ids = fields.One2many('ai_manager.log', 'agent_id', string='Execution Logs')
 
     success_count = fields.Integer(string="Successful Executions", compute='_compute_stats')
     fail_count = fields.Integer(string="Failed Executions", compute='_compute_stats')

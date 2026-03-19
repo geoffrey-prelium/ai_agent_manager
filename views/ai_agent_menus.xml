@@ -14,7 +14,7 @@
     <menuitem id="ai_agent_menu_configuration"
               name="Configuration"
               parent="ai_agent_menu_root"
-              groups="ai_agent_manager.group_ai_agent_manager"
+              groups="ai_agent_manager.group_ai_manager_agent_manager"
               sequence="100"/>
               
 </odoo>

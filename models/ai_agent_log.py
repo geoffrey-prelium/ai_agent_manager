@@ -3,12 +3,12 @@ from odoo import models, fields
 
 
 class AiAgentLog(models.Model):
-    _name = 'ai.agent.log'
+    _name = 'ai_manager.log'
     _description = 'AI Agent Execution Log'
     _order = 'create_date desc'
 
-    agent_id = fields.Many2one('ai.agent', string='Agent', required=True, ondelete='cascade')
-    task_id = fields.Many2one('ai.agent.task', string='Trigger Task')
+    agent_id = fields.Many2one('ai_manager.agent', string='Agent', required=True, ondelete='cascade')
+    task_id = fields.Many2one('ai_manager.task', string='Trigger Task')
 
     input_data = fields.Text(string='Input / Context')
     output_data = fields.Text(string='Output / Response')
