@@ -14,6 +14,7 @@ class AiAgentTask(models.Model):
         ('manual', 'Manual Action'),
         ('cron', 'Scheduled (Cron)'),
         ('webhook', 'Webhook'),
+        ('automated', 'Automated Action (Model Event)'),
     ], string='Trigger Type', default='manual', required=True)
 
     action_code = fields.Text(
