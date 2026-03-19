@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
     <!-- Form View -->
@@ -37,12 +37,12 @@
         <field name="name">ai_manager.task.tree</field>
         <field name="model">ai_manager.task</field>
         <field name="arch" type="xml">
-            <tree string="AI Agent Tasks">
+            <list string="AI Agent Tasks">
                 <field name="name"/>
                 <field name="agent_id"/>
                 <field name="trigger_type"/>
                 <field name="active" widget="boolean_toggle"/>
-            </tree>
+            </list>
         </field>
     </record>
 

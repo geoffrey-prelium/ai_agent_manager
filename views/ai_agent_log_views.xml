@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
     <!-- Form View -->
@@ -41,13 +41,13 @@
         <field name="name">ai_manager.log.tree</field>
         <field name="model">ai_manager.log</field>
         <field name="arch" type="xml">
-            <tree string="Execution Logs" create="0" edit="0" decoration-danger="state == 'failed'" decoration-warning="state == 'pending'" decoration-success="state == 'success'">
+            <list string="Execution Logs" create="0" edit="0" decoration-danger="state == 'failed'" decoration-warning="state == 'pending'" decoration-success="state == 'success'">
                 <field name="create_date"/>
                 <field name="agent_id"/>
                 <field name="task_id"/>
                 <field name="state" widget="badge" decoration-danger="state == 'failed'" decoration-warning="state == 'pending'" decoration-success="state == 'success'"/>
                 <field name="cost_tokens"/>
-            </tree>
+            </list>
         </field>
     </record>
 

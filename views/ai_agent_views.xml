@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
     <!-- Kanban View -->
@@ -83,12 +83,12 @@
                         </page>
                         <page string="Triggers" name="tasks">
                             <field name="task_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="name"/>
                                     <field name="trigger_type"/>
                                     <field name="active" widget="boolean_toggle"/>
                                     <button name="action_trigger_agent" string="Trigger" type="object" icon="fa-play"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -107,13 +107,13 @@
         <field name="name">ai_manager.agent.tree</field>
         <field name="model">ai_manager.agent</field>
         <field name="arch" type="xml">
-            <tree string="AI Agents" decoration-info="state=='draft'" decoration-muted="state=='archived'">
+            <list string="AI Agents" decoration-info="state=='draft'" decoration-muted="state=='archived'">
                 <field name="name"/>
                 <field name="llm_model"/>
                 <field name="state" widget="badge" decoration-success="state == 'active'" decoration-info="state == 'draft'" decoration-muted="state == 'archived'"/>
                 <field name="success_count"/>
                 <field name="fail_count"/>
-            </tree>
+            </list>
         </field>
     </record>
 
