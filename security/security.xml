@@ -11,4 +11,8 @@
         <field name="implied_ids" eval="[(4, ref('ai_agent_manager.group_ai_manager_agent_user'))]"/>
     </record>
 
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('ai_agent_manager.group_ai_manager_agent_manager'))]"/>
+    </record>
+
 </odoo>
