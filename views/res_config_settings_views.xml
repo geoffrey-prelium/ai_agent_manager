@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
     <!-- Res Config Settings -->
@@ -11,8 +11,14 @@
             <xpath expr="//form" position="inside">
                 <app data-string="AI Agents" string="AI Agents" name="ai_agent_manager">
                     <block title="API Integration" name="api_integration">
-                        <setting id="api_keys" title="OpenAI API Integration" string="OpenAI API Configuration" help="Set your OpenAI API Key for agents to work.">
+                        <setting id="api_keys_openai" title="OpenAI API Integration" string="OpenAI API Configuration" help="Set your OpenAI API Key for GPT-4o agents.">
                             <field name="ai_agent_openai_api_key"/>
+                        </setting>
+                        <setting id="api_keys_gemini" title="Google Gemini API Integration" string="Gemini API Configuration" help="Set your Gemini API Key for Gemini 1.5 agents.">
+                            <field name="ai_agent_gemini_api_key"/>
+                        </setting>
+                        <setting id="api_keys_claude" title="Anthropic Claude API Integration" string="Claude API Configuration" help="Set your Anthropic API Key for Claude 3.5 agents.">
+                            <field name="ai_agent_claude_api_key"/>
                         </setting>
                     </block>
                 </app>

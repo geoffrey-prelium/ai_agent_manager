@@ -19,6 +19,10 @@ class AiAgent(models.Model):
     llm_model = fields.Selection([
         ('gpt-4o', 'GPT-4o (OpenAI)'),
         ('gpt-4o-mini', 'GPT-4o Mini (OpenAI)'),
+        ('gemini-1.5-pro', 'Gemini 1.5 Pro (Google)'),
+        ('gemini-1.5-flash', 'Gemini 1.5 Flash (Google)'),
+        ('claude-3-5-sonnet', 'Claude 3.5 Sonnet (Anthropic)'),
+        ('claude-3-5-haiku', 'Claude 3.5 Haiku (Anthropic)')
     ], string='LLM Model', default='gpt-4o', required=True, tracking=True)
 
     system_prompt = fields.Text(

@@ -9,3 +9,11 @@ class ResConfigSettings(models.TransientModel):
         related='company_id.ai_agent_openai_api_key',
         readonly=False,
     )
+    ai_agent_gemini_api_key = fields.Char(
+        related='company_id.ai_agent_gemini_api_key',
+        readonly=False,
+    )
+    ai_agent_claude_api_key = fields.Char(
+        related='company_id.ai_agent_claude_api_key',
+        readonly=False,
+    )
