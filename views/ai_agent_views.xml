@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Kanban View -->
+    <record id="view_ai_agent_kanban" model="ir.ui.view">
+        <field name="name">ai.agent.kanban</field>
+        <field name="model">ai.agent</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="color"/>
+                <field name="success_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.color.raw_value)}} oe_kanban_global_click">
+                            <div class="o_dropdown_kanban dropdown">
+                                <a class="dropdown-toggle o-no-caret btn" role="button" data-bs-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                    <span class="fa fa-ellipsis-v"/>
+                                </a>
+                                <div class="dropdown-menu" role="menu">
+                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                </div>
+                            </div>
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_title">
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="state" widget="badge" decoration-success="state == 'active'" decoration-info="state == 'draft'" decoration-muted="state == 'archived'"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <i class="fa fa-check text-success mr-2" title="Successes"/> <field name="success_count"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_ai_agent_form" model="ir.ui.view">
+        <field name="name">ai.agent.form</field>
+        <field name="model">ai.agent</field>
+        <field name="arch" type="xml">
+            <form string="AI Agent">
+                <header>
+                    <button name="action_activate" string="Activate" type="object" class="oe_highlight" invisible="state != 'draft'" groups="ai_agent_manager.group_ai_agent_manager"/>
+                    <button name="action_draft" string="Set to Draft" type="object" invisible="state == 'draft'" groups="ai_agent_manager.group_ai_agent_manager"/>
+                    <button name="action_archive" string="Archive" type="object" invisible="state == 'archived'" groups="ai_agent_manager.group_ai_agent_manager"/>
+                    <button name="action_open_sandbox" string="Test (Sandbox)" type="object" icon="fa-commenting-o"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Agent Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="llm_model"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Instructions" name="instructions">
+                            <group>
+                                <field name="description" placeholder="What does this agent do?"/>
+                            </group>
+                            <separator string="System Prompt"/>
+                            <field name="system_prompt" widget="text" placeholder="You are a helpful Odoo assistant..."/>
+                        </page>
+                        <page string="Tools &amp; Capabilities" name="tools">
+                            <field name="tool_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Triggers" name="tasks">
+                            <field name="task_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="trigger_type"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                    <button name="action_trigger_agent" string="Trigger" type="object" icon="fa-play"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_ai_agent_tree" model="ir.ui.view">
+        <field name="name">ai.agent.tree</field>
+        <field name="model">ai.agent</field>
+        <field name="arch" type="xml">
+            <tree string="AI Agents" decoration-info="state=='draft'" decoration-muted="state=='archived'">
+                <field name="name"/>
+                <field name="llm_model"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'" decoration-info="state == 'draft'" decoration-muted="state == 'archived'"/>
+                <field name="success_count"/>
+                <field name="fail_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ai_agent" model="ir.actions.act_window">
+        <field name="name">AI Agents</field>
+        <field name="res_model">ai.agent</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create your first AI Agent!
+          </p>
+          <p>
+            AI Agents automate business logic securely and effortlessly.
+          </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="ai_agent_menu"
+              name="My Agents"
+              parent="ai_agent_menu_agents"
+              action="action_ai_agent"
+              sequence="10"/>
+
+</odoo>

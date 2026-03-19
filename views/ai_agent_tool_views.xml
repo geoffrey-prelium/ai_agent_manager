@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form View -->
+    <record id="view_ai_agent_tool_form" model="ir.ui.view">
+        <field name="name">ai.agent.tool.form</field>
+        <field name="model">ai.agent.tool</field>
+        <field name="arch" type="xml">
+            <form string="AI Agent Tool">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Tool Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="tool_type"/>
+                            <field name="target_model_id" invisible="tool_type not in ('read_odoo', 'write_odoo')"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" widget="text" placeholder="Describe the tool capability..."/>
+                        </page>
+                        <page string="Python Code" name="python_code" invisible="tool_type != 'custom_python'">
+                            <field name="python_code" widget="ace" options="{'mode': 'python'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_ai_agent_tool_tree" model="ir.ui.view">
+        <field name="name">ai.agent.tool.tree</field>
+        <field name="model">ai.agent.tool</field>
+        <field name="arch" type="xml">
+            <tree string="AI Agent Tools">
+                <field name="name"/>
+                <field name="tool_type"/>
+                <field name="target_model_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ai_agent_tool" model="ir.actions.act_window">
+        <field name="name">Agent Tools</field>
+        <field name="res_model">ai.agent.tool</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="ai_agent_tool_menu"
+              name="Tools"
+              parent="ai_agent_menu_configuration"
+              action="action_ai_agent_tool"
+              sequence="30"/>
+
+</odoo>

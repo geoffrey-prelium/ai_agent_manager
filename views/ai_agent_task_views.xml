@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form View -->
+    <record id="view_ai_agent_task_form" model="ir.ui.view">
+        <field name="name">ai.agent.task.form</field>
+        <field name="model">ai.agent.task</field>
+        <field name="arch" type="xml">
+            <form string="AI Agent Task">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Task Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="agent_id"/>
+                            <field name="trigger_type"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Action Code / Context" name="action_code">
+                            <field name="action_code" widget="text" placeholder="Instructions context for this task..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_ai_agent_task_tree" model="ir.ui.view">
+        <field name="name">ai.agent.task.tree</field>
+        <field name="model">ai.agent.task</field>
+        <field name="arch" type="xml">
+            <tree string="AI Agent Tasks">
+                <field name="name"/>
+                <field name="agent_id"/>
+                <field name="trigger_type"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ai_agent_task" model="ir.actions.act_window">
+        <field name="name">Agent Tasks / Triggers</field>
+        <field name="res_model">ai.agent.task</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="ai_agent_task_menu"
+              name="Tasks &amp; Triggers"
+              parent="ai_agent_menu_configuration"
+              action="action_ai_agent_task"
+              sequence="20"/>
+
+</odoo>

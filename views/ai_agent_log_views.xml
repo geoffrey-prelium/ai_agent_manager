@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form View -->
+    <record id="view_ai_agent_log_form" model="ir.ui.view">
+        <field name="name">ai.agent.log.form</field>
+        <field name="model">ai.agent.log</field>
+        <field name="arch" type="xml">
+            <form string="Execution Log" create="0" edit="0">
+                <header>
+                    <button name="action_validate" string="Validate &amp; Execute" type="object" class="oe_highlight" invisible="state != 'pending'" groups="ai_agent_manager.group_ai_agent_user"/>
+                    <button name="action_reject" string="Reject" type="object" invisible="state != 'pending'" groups="ai_agent_manager.group_ai_agent_user"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,success,failed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="agent_id"/>
+                            <field name="task_id"/>
+                            <field name="create_date"/>
+                        </group>
+                        <group>
+                            <field name="cost_tokens"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Input/Context" name="input_data">
+                            <field name="input_data" widget="text" readonly="1"/>
+                        </page>
+                        <page string="Output/Response" name="output_data">
+                            <field name="output_data" widget="text" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_ai_agent_log_tree" model="ir.ui.view">
+        <field name="name">ai.agent.log.tree</field>
+        <field name="model">ai.agent.log</field>
+        <field name="arch" type="xml">
+            <tree string="Execution Logs" create="0" edit="0" decoration-danger="state == 'failed'" decoration-warning="state == 'pending'" decoration-success="state == 'success'">
+                <field name="create_date"/>
+                <field name="agent_id"/>
+                <field name="task_id"/>
+                <field name="state" widget="badge" decoration-danger="state == 'failed'" decoration-warning="state == 'pending'" decoration-success="state == 'success'"/>
+                <field name="cost_tokens"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ai_agent_log" model="ir.actions.act_window">
+        <field name="name">Execution Logs</field>
+        <field name="res_model">ai.agent.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="ai_agent_log_menu"
+              name="Logs"
+              parent="ai_agent_menu_agents"
+              action="action_ai_agent_log"
+              sequence="20"/>
+
+</odoo>

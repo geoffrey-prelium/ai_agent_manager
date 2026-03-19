@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="group_ai_agent_user" model="res.groups">
+        <field name="name">AI Agent User</field>
+        <!-- In Odoo 19, category_id and users are not safe to use in XML for res.groups without knowing the exact category, skipping them for safety -->
+    </record>
+
+    <record id="group_ai_agent_manager" model="res.groups">
+        <field name="name">AI Agent Manager</field>
+        <field name="implied_ids" eval="[(4, ref('ai_agent_manager.group_ai_agent_user'))]"/>
+    </record>
+
+</odoo>

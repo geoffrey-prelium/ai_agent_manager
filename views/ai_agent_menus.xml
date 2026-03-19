@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top Menu -->
+    <menuitem id="ai_agent_menu_root"
+              name="AI Agents"
+              web_icon="ai_agent_manager,static/description/icon.png"
+              sequence="10"/>
+
+    <menuitem id="ai_agent_menu_agents"
+              name="Agents"
+              parent="ai_agent_menu_root"
+              sequence="10"/>
+
+    <menuitem id="ai_agent_menu_configuration"
+              name="Configuration"
+              parent="ai_agent_menu_root"
+              groups="ai_agent_manager.group_ai_agent_manager"
+              sequence="100"/>
+              
+</odoo>
