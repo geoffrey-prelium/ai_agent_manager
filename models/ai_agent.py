@@ -19,6 +19,8 @@ class AiAgent(models.Model):
     llm_model = fields.Selection([
         ('gpt-4o', 'GPT-4o (OpenAI)'),
         ('gpt-4o-mini', 'GPT-4o Mini (OpenAI)'),
+        ('gemini-2.5-pro', 'Gemini 2.5 Pro (Google)'),
+        ('gemini-2.5-flash', 'Gemini 2.5 Flash (Google)'),
         ('gemini-1.5-pro', 'Gemini 1.5 Pro (Google)'),
         ('gemini-1.5-flash', 'Gemini 1.5 Flash (Google)'),
         ('claude-3-5-sonnet', 'Claude 3.5 Sonnet (Anthropic)'),
@@ -116,8 +118,7 @@ class AiAgent(models.Model):
             if not api_key:
                 raise UserError(_("Please configure your Google Gemini API Key in Settings."))
             
-            gemini_model = f"{model}-latest"
-            endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{gemini_model}:generateContent?key={api_key}"
+            endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
             headers = {"Content-Type": "application/json"}
             payload = {
                 "systemInstruction": {"parts": [{"text": system_prompt}]},
