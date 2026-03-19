@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
     <!-- Kanban View -->
@@ -121,7 +121,7 @@
     <record id="action_ai_agent" model="ir.actions.act_window">
         <field name="name">AI Agents</field>
         <field name="res_model">ai_manager.agent</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="help" type="html">
           <p class="o_view_nocontent_smiling_face">
             Create your first AI Agent!
