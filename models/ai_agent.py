@@ -72,3 +72,93 @@ class AiAgent(models.Model):
                 'sticky': False,
             }
         }
+
+    def _call_llm(self, user_prompt):
+        """
+        Executes an HTTP request to the selected LLM provider.
+        Returns a tuple: (response_text, tokens_used)
+        """
+        self.ensure_one()
+        import requests
+        import json
+        from odoo.exceptions import UserError
+
+        model = self.llm_model
+        system_prompt = self.system_prompt or ""
+        company = self.env.company
+
+        if model.startswith('gpt'):
+            api_key = company.ai_agent_openai_api_key
+            if not api_key:
+                raise UserError(_("Please configure your OpenAI API Key in Settings."))
+            
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ]
+            }
+            try:
+                response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=60)
+                response.raise_for_status()
+                data = response.json()
+                return data['choices'][0]['message']['content'], data.get('usage', {}).get('total_tokens', 0)
+            except Exception as e:
+                raise UserError(_("OpenAI API Error: %s") % str(e))
+
+        elif model.startswith('gemini'):
+            api_key = company.ai_agent_gemini_api_key
+            if not api_key:
+                raise UserError(_("Please configure your Google Gemini API Key in Settings."))
+            
+            endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+            headers = {"Content-Type": "application/json"}
+            payload = {
+                "systemInstruction": {"parts": [{"text": system_prompt}]},
+                "contents": [{"parts": [{"text": user_prompt}]}]
+            }
+            try:
+                response = requests.post(endpoint, headers=headers, json=payload, timeout=60)
+                response.raise_for_status()
+                data = response.json()
+                text = data['candidates'][0]['content']['parts'][0]['text']
+                tokens = data.get('usageMetadata', {}).get('totalTokenCount', 0)
+                return text, tokens
+            except Exception as e:
+                raise UserError(_("Gemini API Error: %s\nResponse: %s") % (str(e), response.text if 'response' in locals() else ''))
+
+        elif model.startswith('claude'):
+            api_key = company.ai_agent_claude_api_key
+            if not api_key:
+                raise UserError(_("Please configure your Anthropic Claude API Key in Settings."))
+            
+            # Map simplified names to Anthropic full model names if necessary
+            anthropic_model = "claude-3-5-sonnet-20240620" if "sonnet" in model else "claude-3-5-haiku-20241022"
+            
+            headers = {
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": anthropic_model,
+                "system": system_prompt,
+                "messages": [
+                    {"role": "user", "content": user_prompt}
+                ],
+                "max_tokens": 4096
+            }
+            try:
+                response = requests.post("https://api.anthropic.com/v1/messages", headers=headers, json=payload, timeout=60)
+                response.raise_for_status()
+                data = response.json()
+                return data['content'][0]['text'], data.get('usage', {}).get('input_tokens', 0) + data.get('usage', {}).get('output_tokens', 0)
+            except Exception as e:
+                raise UserError(_("Anthropic API Error: %s\nResponse: %s") % (str(e), response.text if 'response' in locals() else ''))
+
+        raise UserError(_("Unsupported LLM Model: %s") % model)
