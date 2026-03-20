@@ -2,7 +2,7 @@
 
 {
     'name': 'AI Agent Manager',
-    'version': '2.0',
+    'version': '3.0',
     'category': 'Productivity/AI',
     'summary': 'Deploy user-defined AI agents to automate tasks.',
     'description': """
