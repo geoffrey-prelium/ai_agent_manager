@@ -2,21 +2,16 @@
 
 {
     'name': 'AI Agent Manager',
-    'version': '3.0',
+    'version': '4.0',
     'category': 'Productivity/AI',
-    'summary': 'Deploy user-defined AI agents to automate tasks.',
+    'summary': 'Generate and deploy automated actions using AI.',
     'description': """
-        AI Agent Manager
-        ================
-        Allow non-technical users to create, configure and deploy AI agents within Odoo.
-        - Define custom system prompts.
-        - Assign specific Odoo tools for granular access.
-        - Trigger agents manually, via cron or webhooks.
-        - Human-in-the-loop validation for sensitive actions.
-        - Execute and track costs.
+        AI Automated Action Generator
+        =============================
+        Allow non-technical users to create, test, and deploy AI-generated Python scripts as Odoo Automated Actions (base_automation).
     """,
-    'author': 'Prelium',
-    'depends': ['base', 'mail', 'web'],
+    'author': 'LPDE / Antigravity',
+    'depends': ['base', 'mail', 'web', 'base_automation'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',

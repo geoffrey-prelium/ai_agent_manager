@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <form string="Execution Log" create="0" edit="0">
                 <header>
+                    <button name="action_convert_to_automation" string="Deploy as Automated Action" type="object" class="btn-success" invisible="state != 'success'" groups="ai_agent_manager.group_ai_manager_agent_manager" confirm="This will transform the generated Python code into a native Odoo Automated Action and pause this AI Agent to save tokens. Proceed?"/>
                     <button name="action_validate" string="Validate &amp; Execute" type="object" class="oe_highlight" invisible="state != 'pending'" groups="ai_agent_manager.group_ai_manager_agent_user"/>
                     <button name="action_reject" string="Reject" type="object" invisible="state != 'pending'" groups="ai_agent_manager.group_ai_manager_agent_user"/>
                     <field name="state" widget="statusbar" statusbar_visible="pending,success,failed"/>
