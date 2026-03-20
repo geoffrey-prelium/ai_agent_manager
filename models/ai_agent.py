@@ -183,7 +183,9 @@ class AiAgent(models.Model):
             if not api_key:
                 raise UserError(_("Please configure your Google Gemini API Key in Settings."))
             
-            endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+            # Map legacy 1.5 model to 2.5 to prevent crashes on old agents
+            gemini_model = "gemini-2.5-flash" if "1.5" in model else model
+            endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{gemini_model}:generateContent?key={api_key}"
             headers = {"Content-Type": "application/json"}
             payload = {
                 "systemInstruction": {"parts": [{"text": system_prompt}]},
