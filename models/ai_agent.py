@@ -88,9 +88,12 @@ class AiAgent(models.Model):
         system_instruction = (
             "You are an advanced Odoo Assistant Agent with execution capabilities. "
             "Based on the user's action code and context, you must write a Python script using the Odoo ORM to perform the desired action. "
+            "CRITICAL ODOO SAFE_EVAL CONSTRAINTS:\n"
+            "1. You CANNOT use 'import' statements (e.g., no 'import re', 'import time').\n"
+            "2. You CANNOT mutate record attributes directly (e.g., do NOT use `record.active = False`). You MUST use the ORM `write` method instead (e.g., `record.write({'active': False})`).\n"
             "You have access to the following local variables:\n"
             "- `env`: the Odoo Environment (e.g. env['res.partner'])\n"
-            "- `record`: the Odoo record that triggered this action. You can read its fields or call methods on it (e.g. record.message_post()).\n\n"
+            "- `record`: the Odoo record that triggered this action. You can read its fields or call methods on it.\n\n"
             "Return ONLY valid Python code enclosed in a ```python ... ``` block. Do NOT provide explanations. Just the code."
         )
         
