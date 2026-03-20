@@ -12,6 +12,7 @@ class ResPartner(models.Model):
             tasks = self.env['ai_manager.task'].sudo().search([
                 ('trigger_type', '=', 'automated'),
                 ('active', '=', True),
+                ('agent_id.active', '=', True),
             ])
             for task in tasks:
                 # Execute all automated tasks for the created contacts

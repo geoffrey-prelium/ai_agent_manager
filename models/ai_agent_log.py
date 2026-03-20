@@ -70,8 +70,10 @@ class AiAgentLog(models.Model):
 
             automation = self.env['base.automation'].create(automation_vals)
             
-            # Archive the agent to stop LLM calls
+            # Archive the agent and specific task to stop LLM calls
             log.agent_id.active = False
+            if log.task_id:
+                log.task_id.active = False
             
             # Notify User
             return {
