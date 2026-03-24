@@ -96,9 +96,12 @@ class AiAgent(models.Model):
             "2. Note: The `fields` module is NOT available. If you need today's date, use `datetime.date.today()` instead of `fields.Date.today()`.\n"
             "3. You CANNOT mutate record attributes directly (e.g., do NOT use `record.active = False`). You MUST use the ORM `write` method instead (e.g., `record.write({'active': False})`).\n"
             "4. ODOO 19 ENVIRONMENT: Many fields and models from older versions have been removed or renamed. "
-            "For example: 'account.account.type' no longer exists; on 'account.account', use the 'account_type' selection field instead of 'user_type_id'. "
-            "Also, 'company_id' is mostly replaced by 'company_ids' (Many2many) on 'account.account', 'account.journal', etc.\n"
-            "5. If you encounter a database error (e.g., KeyError for missing models, or ValueError for missing columns), you must adapt your code. Use `env.keys()` or `env['ir.model.fields'].search` to introspect if necessary.\n"
+            "For example on 'account.account', use the 'account_type' selection field instead of 'user_type_id'.\n"
+            "5. CRITICAL ODOO 19 ACCOUNTING CHANGE: 'company_id' no longer exists on 'account.account' and 'account.journal'. It is completely replaced by 'company_ids' (Many2many). "
+            "DO NOT EVER use 'company_id' when searching or creating accounts/journals. "
+            "To search an account/journal for a company: `[('company_ids', 'in', [company.id])]`. "
+            "To create an account/journal for a company: `{'company_ids': [(4, company.id)]}`.\n"
+            "6. If you encounter a database error (e.g., KeyError for missing models, or ValueError for missing columns), you must adapt your code. Use `env.keys()` or `env['ir.model.fields'].search` to introspect if necessary.\n"
             "You have access to the following local variables:\n"
             "- `env`: the Odoo Environment (e.g. env['res.partner'])\n"
             "- `record`: the Odoo record that triggered this action.\n\n"
@@ -149,8 +152,9 @@ class AiAgent(models.Model):
                     prompt += (
                         f"\n\nYour previous code failed with the following error:\n{error_msg}\n"
                         "Please rewrite the Python code to fix this error. "
-                        "Common mistakes: Using removed models/fields (e.g., account.account.type or user_type_id instead of account_type, company_id instead of company_ids). "
-                        "Syntax errors: Do NOT use trailing backslashes or line continuations incorrectly. "
+                        "Common mistakes: Using removed models/fields (e.g., account.account.type or user_type_id instead of account_type). "
+                        "CRITICAL: Do NOT use 'company_id' on 'account.account' or 'account.journal'. Use 'company_ids' (Many2many) instead. Use `('company_ids', 'in', [company.id])` for search, and `{'company_ids': [(4, company.id)]}` for creation! "
+                        "Syntax errors: Do NOT use trailing backslashes `\\` or line continuations incorrectly. "
                         "Return only the new Python code enclosed in ```python ... ```."
                     )
                     current_attempt += 1
