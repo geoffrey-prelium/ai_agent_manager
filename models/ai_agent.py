@@ -81,6 +81,9 @@ class AiAgent(models.Model):
         """
         self.ensure_one()
         from odoo.tools.safe_eval import safe_eval
+        from odoo import fields
+        import datetime
+        import time
         import re
 
         context_str = f"Trigger Record Model: {record._name}\nTrigger Record ID: {record.id}\nTrigger Record Name: {record.display_name}\n"
@@ -89,14 +92,16 @@ class AiAgent(models.Model):
             "You are an advanced Odoo Assistant Agent with execution capabilities. "
             "Based on the user's action code and context, you must write a Python script using the Odoo ORM to perform the desired action. "
             "CRITICAL ODOO SAFE_EVAL CONSTRAINTS:\n"
-            "1. You CANNOT use 'import' statements (e.g., no 'import re', 'import time').\n"
+            "1. You CANNOT use 'import' statements. 'datetime', 'time', and Odoo 'fields' are already injected in your local namespace. Just use `datetime.date.today()` or `fields.Date.today()`.\n"
             "2. You CANNOT mutate record attributes directly (e.g., do NOT use `record.active = False`). You MUST use the ORM `write` method instead (e.g., `record.write({'active': False})`).\n"
             "3. ODOO 19 ENVIRONMENT: Many fields and models from older versions have been removed or renamed. "
-            "For example, 'account.account.type' no longer exists. On 'account.account', use the 'account_type' selection field instead of 'user_type_id'. "
+            "For example: 'account.account.type' no longer exists; on 'account.account', use the 'account_type' selection field instead of 'user_type_id'. "
+            "Also, 'company_id' is mostly replaced by 'company_ids' (Many2many) on 'account.account', 'account.journal', etc.\n"
             "4. If you encounter a database error (e.g., KeyError for missing models, or ValueError for missing columns), you must adapt your code. Use `env.keys()` or `env['ir.model.fields'].search` to introspect if necessary.\n"
             "You have access to the following local variables:\n"
             "- `env`: the Odoo Environment (e.g. env['res.partner'])\n"
-            "- `record`: the Odoo record that triggered this action. You can read its fields or call methods on it.\n\n"
+            "- `record`: the Odoo record that triggered this action.\n"
+            "- `datetime`, `time`, `fields`: the respective Python/Odoo modules.\n\n"
             "Return ONLY valid Python code enclosed in a ```python ... ``` block. Do NOT provide explanations. Just the code."
         )
         
@@ -128,6 +133,9 @@ class AiAgent(models.Model):
                 eval_context = {
                     'env': self.env,
                     'record': record,
+                    'datetime': datetime,
+                    'time': time,
+                    'fields': fields,
                 }
                 
                 try:
@@ -144,7 +152,7 @@ class AiAgent(models.Model):
                     prompt += (
                         f"\n\nYour previous code failed with the following error:\n{error_msg}\n"
                         "Please rewrite the Python code to fix this error. "
-                        "Common mistakes: Using removed models/fields (e.g., account.account.type or user_type_id instead of account_type). "
+                        "Common mistakes: Using removed models/fields (e.g., account.account.type or user_type_id instead of account_type, company_id instead of company_ids). "
                         "Syntax errors: Do NOT use trailing backslashes or line continuations incorrectly. "
                         "Return only the new Python code enclosed in ```python ... ```."
                     )
