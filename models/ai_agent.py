@@ -167,6 +167,16 @@ class AiAgent(models.Model):
                             for m in valid_models:
                                 available_fields = list(self.env[m].fields_get().keys())
                                 schema_hint += f"- {m} available fields: {', '.join(available_fields)}\n"
+                                
+                        # Check for specific "Wrong value for model.field" error to provide selection keys
+                        wrong_value_match = re.search(r"Wrong value for ([\w.]+)\.([\w_]+)", error_msg)
+                        if wrong_value_match:
+                            err_model, err_field = wrong_value_match.groups()
+                            if err_model in self.env:
+                                field_info = self.env[err_model].fields_get([err_field]).get(err_field, {})
+                                if field_info.get('type') == 'selection':
+                                    valid_selections = [s[0] for s in field_info.get('selection', [])]
+                                    schema_hint += f"\n[SYSTEM HELPER] Valid values for selection field '{err_model}.{err_field}' are: {valid_selections}\n"
                     except Exception:
                         pass # Ignore introspection errors
 
