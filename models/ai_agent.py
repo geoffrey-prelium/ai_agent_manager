@@ -91,7 +91,9 @@ class AiAgent(models.Model):
             "CRITICAL ODOO SAFE_EVAL CONSTRAINTS:\n"
             "1. You CANNOT use 'import' statements (e.g., no 'import re', 'import time').\n"
             "2. You CANNOT mutate record attributes directly (e.g., do NOT use `record.active = False`). You MUST use the ORM `write` method instead (e.g., `record.write({'active': False})`).\n"
-            "3. ODOO 19 ENVIRONMENT: Many fields and models from older versions have been removed or renamed. If you encounter a database error (e.g., KeyError or psycopg2 error) for a missing model or field, you must adapt your code.\n"
+            "3. ODOO 19 ENVIRONMENT: Many fields and models from older versions have been removed or renamed. "
+            "For example, 'account.account.type' no longer exists. On 'account.account', use the 'account_type' selection field instead of 'user_type_id'. "
+            "4. If you encounter a database error (e.g., KeyError for missing models, or ValueError for missing columns), you must adapt your code. Use `env.keys()` or `env['ir.model.fields'].search` to introspect if necessary.\n"
             "You have access to the following local variables:\n"
             "- `env`: the Odoo Environment (e.g. env['res.partner'])\n"
             "- `record`: the Odoo record that triggered this action. You can read its fields or call methods on it.\n\n"
@@ -100,7 +102,7 @@ class AiAgent(models.Model):
         
         prompt = f"Action to perform:\n{action_code}\n\nContext:\n{context_str}\n\n{system_instruction}"
         
-        max_retries = 3
+        max_retries = 4
         current_attempt = 1
         success = False
         execution_log = ""
@@ -139,7 +141,13 @@ class AiAgent(models.Model):
                     error_msg = str(e)
                     execution_log += f"\n--- Execution Error ---\n{error_msg}\n"
                     # Append the error to the prompt for self-correction
-                    prompt += f"\n\nYour previous code failed with the following error:\n{error_msg}\nPlease rewrite the Python code to fix this error. Remember that this is Odoo 19, some models or fields may have changed. Return only the new Python code enclosed in ```python ... ```."
+                    prompt += (
+                        f"\n\nYour previous code failed with the following error:\n{error_msg}\n"
+                        "Please rewrite the Python code to fix this error. "
+                        "Common mistakes: Using removed models/fields (e.g., account.account.type or user_type_id instead of account_type). "
+                        "Syntax errors: Do NOT use trailing backslashes or line continuations incorrectly. "
+                        "Return only the new Python code enclosed in ```python ... ```."
+                    )
                     current_attempt += 1
                     
             except Exception as e:
