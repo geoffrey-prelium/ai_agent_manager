@@ -203,7 +203,7 @@ class AiAgent(models.Model):
                 ]
             }
             try:
-                response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=60)
+                response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, timeout=120)
                 response.raise_for_status()
                 data = response.json()
                 return data['choices'][0]['message']['content'], data.get('usage', {}).get('total_tokens', 0)
@@ -224,7 +224,7 @@ class AiAgent(models.Model):
                 "contents": [{"parts": [{"text": user_prompt}]}]
             }
             try:
-                response = requests.post(endpoint, headers=headers, json=payload, timeout=60)
+                response = requests.post(endpoint, headers=headers, json=payload, timeout=120)
                 response.raise_for_status()
                 data = response.json()
                 text = data['candidates'][0]['content']['parts'][0]['text']
@@ -255,7 +255,7 @@ class AiAgent(models.Model):
                 "max_tokens": 4096
             }
             try:
-                response = requests.post("https://api.anthropic.com/v1/messages", headers=headers, json=payload, timeout=60)
+                response = requests.post("https://api.anthropic.com/v1/messages", headers=headers, json=payload, timeout=120)
                 response.raise_for_status()
                 data = response.json()
                 return data['content'][0]['text'], data.get('usage', {}).get('input_tokens', 0) + data.get('usage', {}).get('output_tokens', 0)
