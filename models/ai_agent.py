@@ -97,13 +97,14 @@ class AiAgent(models.Model):
             "3. You CANNOT mutate record attributes directly (e.g., do NOT use `record.active = False`). You MUST use the ORM `write` method instead (e.g., `record.write({'active': False})`).\n"
             "4. ODOO 19 ENVIRONMENT: Many fields and models from older versions have been removed or renamed. "
             "For example on 'account.account', use the 'account_type' selection field instead of 'user_type_id'.\n"
-            "5. CRITICAL ODOO 19 ACCOUNTING CHANGE: 'company_id' no longer exists on 'account.account' ONLY. It is completely replaced by 'company_ids' (Many2many). "
+            "5. CRITICAL ODOO 19 SCHEMA CHANGES: 'account_id' has been removed from 'account.tax'. You CANNOT set 'account_id' on 'account.tax'. Also, 'invoice_policy' has been removed from 'product.product'. Do NOT use it.\n"
+            "6. CRITICAL ODOO 19 ACCOUNTING CHANGE: 'company_id' no longer exists on 'account.account' ONLY. It is completely replaced by 'company_ids' (Many2many). "
             "DO NOT EVER use 'company_id' when searching or creating 'account.account'. "
             "To search an account for a company: `[('company_ids', 'in', [company.id])]`. "
             "To create an account for a company: `{'company_ids': [(4, company.id)]}`.\n"
             "HOWEVER, 'account.journal' STILL USES 'company_id' (Many2one)! Do NOT use 'company_ids' on journals.\n"
-            "6. ACCOUNTING RULES: A sales ('sale') or purchase ('purchase') journal CANNOT have an 'asset_receivable' or 'liability_payable' account as its `default_account_id`. Only bank/cash/general journals can have default accounts.\n"
-            "7. If you encounter a database error (e.g., KeyError for missing models, or ValueError for missing columns), you must adapt your code. Use `env.keys()` or `env['ir.model.fields'].search` to introspect if necessary.\n"
+            "7. ACCOUNTING RULES: A sales ('sale') or purchase ('purchase') journal CANNOT have an 'asset_receivable' or 'liability_payable' account as its `default_account_id`. Only bank/cash/general journals can have default accounts.\n"
+            "8. If you encounter a database error (e.g., KeyError for missing models, or ValueError for missing columns), you must adapt your code. Use `env.keys()` or `env['ir.model.fields'].search` to introspect if necessary.\n"
             "You have access to the following local variables:\n"
             "- `env`: the Odoo Environment (e.g. env['res.partner'])\n"
             "- `record`: the Odoo record that triggered this action.\n\n"
@@ -141,6 +142,12 @@ class AiAgent(models.Model):
                 }
                 
                 try:
+                    # Pre-validate models used in the script before execution
+                    used_models = set(re.findall(r"env\[['\"]([\w.]+)['\"]\]", code_to_execute))
+                    invalid_models = [m for m in used_models if m not in self.env]
+                    if invalid_models:
+                        raise ValueError(f"CRITICAL PRE-VALIDATION ERROR: Models {', '.join(invalid_models)} DO NOT EXIST in this Odoo version.")
+
                     # Use a savepoint to prevent a bad query from aborting the entire transaction
                     with self.env.cr.savepoint():
                         safe_eval(code_to_execute, eval_context, mode='exec')
@@ -150,14 +157,29 @@ class AiAgent(models.Model):
                 except Exception as e:
                     error_msg = str(e)
                     execution_log += f"\n--- Execution Error ---\n{error_msg}\n"
+                    
+                    # Introspect schema to help the AI self-correct
+                    schema_hint = ""
+                    try:
+                        valid_models = [m for m in set(re.findall(r"env\[['\"]([\w.]+)['\"]\]", code_to_execute)) if m in self.env]
+                        if valid_models:
+                            schema_hint += "\n[SYSTEM HELPER] SCHEMA REFERENCE FOR MODELS USED IN YOUR SCRIPT:\n"
+                            for m in valid_models:
+                                available_fields = list(self.env[m].fields_get().keys())
+                                schema_hint += f"- {m} available fields: {', '.join(available_fields)}\n"
+                    except Exception:
+                        pass # Ignore introspection errors
+
                     # Append the error to the prompt for self-correction
                     prompt += (
                         f"\n\nYour previous code failed with the following error:\n{error_msg}\n"
+                        f"{schema_hint}\n"
                         "Please rewrite the Python code to fix this error. "
                         "Common mistakes: Using removed models/fields (e.g., account.account.type or user_type_id instead of account_type). "
                         "CRITICAL: Do NOT use 'company_id' on 'account.account', use 'company_ids' (Many2many) instead (`('company_ids', 'in', [company.id])` for search, `{'company_ids': [(4, company.id)]}` for creation). BUT 'account.journal' STILL USES 'company_id' (Many2one)!\n"
                         "CRITICAL: Do not use `import datetime`. It is forbidden in `safe_eval` but is already available globally.\n"
                         "CRITICAL: Sales and purchase journals MUST NOT have a receivable or payable account as `default_account_id`.\n"
+                        "CRITICAL: 'account_id' does not exist on 'account.tax'. 'invoice_policy' does not exist on 'product.product'.\n"
                         "Syntax errors: Do NOT use trailing backslashes `\\` or line continuations incorrectly. "
                         "Return only the new Python code enclosed in ```python ... ```."
                     )
